@@ -35,8 +35,8 @@ override LDFLAGS := $(LDFLAGS) -lpthread -lrt
 all: output-Makefile $(DEPFILES) $(TARGETS)
 
 define install_linking_command
-@echo '-I. -I$(DESTDIR)/include -fasynchronous-unwind-tables -Wl,--no-as-needed $(DESTDIR)/lib/libepos-0.a $(DESTDIR)/lib/libevl-0.a -lpthread -lrt -static' > $(DESTDIR)/$(libdir)/$(STATIC_LINKING_COMMAND)
-@echo '-I. -I$(DESTDIR)/include -fasynchronous-unwind-tables -Wl,--no-as-needed -L$(LIBEVL_RROS)/lib -lepos -levl -lpthread -lrt' > $(DESTDIR)/$(libdir)/$(DYNAMIC_LINKING_COMMAND)
+@echo '-I. -I$(DESTDIR)/include -fasynchronous-unwind-tables -Wl,-Wl,--wrap=main $(DESTDIR)/lib/libepos-0.a $(DESTDIR)/lib/libevl-0.a -lpthread -lrt -static' > $(DESTDIR)/$(libdir)/$(STATIC_LINKING_COMMAND)
+@echo '-I. -I$(DESTDIR)/include -fasynchronous-unwind-tables -Wl,-Wl,--wrap=main -L$(LIBEVL_RROS)/lib -lepos -levl -lpthread -lrt' > $(DESTDIR)/$(libdir)/$(DYNAMIC_LINKING_COMMAND)
 endef
 
 install install_all: all
