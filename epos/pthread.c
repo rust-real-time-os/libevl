@@ -1,7 +1,10 @@
+#include <evl/mutex.h>
+#include <evl/clock.h>
+#include <evl/thread.h>
+
 #include <epos/pthread.h>
 #include <epos/wrapper.h>
 #include <errno.h>
-#include <evl/thread.h>
 #include <malloc.h>
 #include <stdlib.h>
 struct pthread_iargs {
@@ -52,4 +55,26 @@ EPOS_IMPL(int, pthread_create,
   iargs->arg = arg;
   __STD(pthread_create)(ptid_r, attr, evl_thread_trampoline, iargs);
   return 0;
+}
+
+EPOS_IMPL(int,pthread_attr_setstacksize,(pthread_attr_t *__attr,
+				      size_t __stacksize)){
+    
+    // ioctl
+    // sprintf
+    return 0;
+}
+
+
+EPOS_IMPL(int, pthread_mutex_init,(evl_mutex *mutex,
+                                  const pthread_mutexattr_t *__mutexattr)){
+    return evl_create_mutex(mutex,EVL_CLOCK_MONOTONIC,0,0,"evl_mutex");
+}
+
+EPOS_IMPL(int, pthread_mutex_lock,(evl_mutex *mutex)){
+    return evl_lock_mutex(mutex);
+}
+
+EPOS_IMPL(int, pthread_mutex_unlock,(evl_mutex *mutex)){
+    return evl_unlock_mutex(mutex);
 }
