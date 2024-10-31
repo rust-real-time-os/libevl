@@ -64,6 +64,8 @@ int evl_subscribe(int ofd,
 
 int evl_unsubscribe(int ofd);
 
+int evl_join(int efd);
+
 #ifdef __cplusplus
 }
 #endif
