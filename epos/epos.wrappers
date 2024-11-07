@@ -1,4 +1,10 @@
 --wrap pthread_create
---wrap pthread_mutex_init
---wrap pthread_mutex_lock
---wrap pthread_mutex_unlock
+--wrap pthread_join
+--wrap pthread_kill
+--wrap pthread_setname_np
+--wrap pthread_yield
+
+--wrap pthread_attr_init
+--wrap pthread_setschedparam
+--wrap pthread_getschedparam
+--wrap pthread_setschedprio
