@@ -25,13 +25,15 @@ void rand_str(char *dest, size_t length);
 
 extern const char* evl_program_basename;
 
-inline clockid_t get_evl_clock_id(clockid_t clock_id);
+clockid_t get_evl_clock_id(clockid_t clock_id);
 
-inline struct evl_event *get_evl_cond(pthread_cond_t *std_cond);
+struct evl_event *get_evl_cond(pthread_cond_t *std_cond);
 
-inline struct evl_mutex *get_evl_mutex(pthread_mutex_t *std_mutex);
+struct evl_mutex *get_evl_mutex(pthread_mutex_t *std_mutex);
 
-inline struct evl_sem *get_evl_sem(sem_t *std_sem);
+struct evl_sem *get_evl_sem(sem_t *std_sem);
+
+int get_evl_thread_fd(pthread_t thread);
 
 
 #endif

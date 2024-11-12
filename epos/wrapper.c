@@ -1,175 +1,181 @@
-// /*
-//  * Copyright (C) 2005 Heikki Lindholm <holindho@cs.helsinki.fi>.
-//  *
-//  * This library is free software; you can redistribute it and/or
-//  * modify it under the terms of the GNU Lesser General Public
-//  * License as published by the Free Software Foundation; either
-//  * version 2 of the License, or (at your option) any later version.
-//  *
-//  * This library is distributed in the hope that it will be useful,
-//  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  * Lesser General Public License for more details.
+/*
+ * Copyright (C) 2005 Heikki Lindholm <holindho@cs.helsinki.fi>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
 
-//  * You should have received a copy of the GNU Lesser General Public
-//  * License along with this library; if not, write to the Free Software
-//  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
-//  */
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ */
 
-// /*
-//  * NOTE: functions in dynamically linked libraries aren't
-//  * wrapped. These are fallback functions for __real* functions used by
-//  * the library itself.
-//  */
-// #include <sys/types.h>
-// #include <sys/stat.h>
-// #include <sys/ioctl.h>
-// #include <sys/select.h>
-// #include <sys/socket.h>
-// #include <sys/time.h>
-// #include <sys/mman.h>
-// #include <stdio.h>
-// #include <stdarg.h>
-// #include <stdlib.h>
-// #include <signal.h>
-// #include <syslog.h>
-// #include <pthread.h>
-// #include <semaphore.h>
-// #include <limits.h>
-// #include <fcntl.h>
-// #include <sched.h>
-// #include <memory.h>
-// #include <unistd.h>
-// #include <malloc.h>
+/*
+ * NOTE: functions in dynamically linked libraries aren't
+ * wrapped. These are fallback functions for __real* functions used by
+ * the library itself.
+ */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <syslog.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <limits.h>
+#include <fcntl.h>
+#include <sched.h>
+#include <memory.h>
+#include <unistd.h>
+#include <malloc.h>
+#include <epos/pthread.h>
+#include <epos/semaphore.h>
+#include <epos/time.h>
+#include <epos/unistd.h>
+#include <epos/time.h>
+#include <epos/sched.h>
 
-// /* support for very old c libraries not supporting O_TMPFILE */
-// #ifndef O_TMPFILE
-// #define O_TMPFILE (020000000 | 0200000)
-// #endif
+/* support for very old c libraries not supporting O_TMPFILE */
+#ifndef O_TMPFILE
+#define O_TMPFILE (020000000 | 0200000)
+#endif
 
-// #define __weak __attribute__((weak))
-// /* sched */
-// __weak
-// int __real_pthread_setschedparam(pthread_t thread,
-// 				 int policy, const struct sched_param *param)
-// {
-// 	return pthread_setschedparam(thread, policy, param);
-// }
+#define __weak __attribute__((weak))
+/* sched */
+__weak
+int __real_pthread_setschedparam(pthread_t thread,
+				 int policy, const struct sched_param *param)
+{
+	return pthread_setschedparam(thread, policy, param);
+}
 
-// __weak
-// int __real_pthread_getschedparam(pthread_t thread,
-// 				 int *policy, struct sched_param *param)
-// {
-// 	return pthread_getschedparam(thread, policy, param);
-// }
+__weak
+int __real_pthread_getschedparam(pthread_t thread,
+				 int *policy, struct sched_param *param)
+{
+	return pthread_getschedparam(thread, policy, param);
+}
 
-// __weak
-// int __real_pthread_setschedprio(pthread_t thread, int prio)
-// {
-// 	return pthread_setschedprio(thread, prio);
-// }
+__weak
+int __real_pthread_setschedprio(pthread_t thread, int prio)
+{
+	return pthread_setschedprio(thread, prio);
+}
 
-// __weak
-// int __real_sched_yield(void)
-// {
-// 	return sched_yield();
-// }
+__weak
+int __real_sched_yield(void)
+{
+	return sched_yield();
+}
 
-// __weak
-// int __real_sched_get_priority_min(int policy)
-// {
-// 	return sched_get_priority_min(policy);
-// }
+__weak
+int __real_sched_get_priority_min(int policy)
+{
+	return sched_get_priority_min(policy);
+}
 
-// __weak
-// int __real_sched_get_priority_max(int policy)
-// {
-// 	return sched_get_priority_max(policy);
-// }
+__weak
+int __real_sched_get_priority_max(int policy)
+{
+	return sched_get_priority_max(policy);
+}
 
-// __weak
-// int __real_sched_setscheduler(pid_t pid, int policy,
-// 			      const struct sched_param *param)
-// {
-// 	return sched_setscheduler(pid, policy, param);
-// }
+__weak
+int __real_sched_setscheduler(pid_t pid, int policy,
+			      const struct sched_param *param)
+{
+	return sched_setscheduler(pid, policy, param);
+}
 
-// __weak
-// int __real_sched_getscheduler(pid_t pid)
-// {
-// 	return sched_getscheduler(pid);
-// }
+__weak
+int __real_sched_getscheduler(pid_t pid)
+{
+	return sched_getscheduler(pid);
+}
 
-// /* pthread */
-// __weak
-// int __real_pthread_create(pthread_t *ptid_r,
-// 			  const pthread_attr_t * attr,
-// 			  void *(*start) (void *), void *arg)
-// {
-// 	return pthread_create(ptid_r, attr, start, arg);
-// }
+/* pthread */
+__weak
+int __real_pthread_create(pthread_t *ptid_r,
+			  const pthread_attr_t * attr,
+			  void *(*start) (void *), void *arg)
+{
+	return pthread_create(ptid_r, attr, start, arg);
+}
 
-// __weak
-// int __real_pthread_kill(pthread_t ptid, int sig)
-// {
-// 	return pthread_kill(ptid, sig);
-// }
+__weak
+int __real_pthread_kill(pthread_t ptid, int sig)
+{
+	return pthread_kill(ptid, sig);
+}
 
-// __weak
-// int __real_pthread_join(pthread_t ptid, void **retval)
-// {
-// 	return pthread_join(ptid, retval);
-// }
+__weak
+int __real_pthread_join(pthread_t ptid, void **retval)
+{
+	return pthread_join(ptid, retval);
+}
 
-// /* attr */
-// __weak
-// int __real_pthread_attr_init(pthread_attr_t *attr)
-// {
-// 	return pthread_attr_init(attr);
-// }
+/* attr */
+__weak
+int __real_pthread_attr_init(pthread_attr_t *attr)
+{
+	return pthread_attr_init(attr);
+}
 
-// /* semaphores */
-// __weak
-// int __real_sem_init(sem_t * sem, int pshared, unsigned value)
-// {
-// 	return sem_init(sem, pshared, value);
-// }
+/* semaphores */
+__weak
+int __real_sem_init(sem_t * sem, int pshared, unsigned value)
+{
+	return sem_init(sem, pshared, value);
+}
 
-// __weak
-// int __real_sem_destroy(sem_t * sem)
-// {
-// 	return sem_destroy(sem);
-// }
+__weak
+int __real_sem_destroy(sem_t * sem)
+{
+	return sem_destroy(sem);
+}
 
-// __weak
-// int __real_sem_post(sem_t * sem)
-// {
-// 	return sem_post(sem);
-// }
+__weak
+int __real_sem_post(sem_t * sem)
+{
+	return sem_post(sem);
+}
 
-// __weak
-// int __real_sem_wait(sem_t * sem)
-// {
-// 	return sem_wait(sem);
-// }
+__weak
+int __real_sem_wait(sem_t * sem)
+{
+	return sem_wait(sem);
+}
 
-// __weak
-// int __real_sem_trywait(sem_t * sem)
-// {
-// 	return sem_trywait(sem);
-// }
+__weak
+int __real_sem_trywait(sem_t * sem)
+{
+	return sem_trywait(sem);
+}
 
-// __weak
-// int __real_sem_timedwait(sem_t * sem, const struct timespec *abs_timeout)
-// {
-// 	return sem_timedwait(sem, abs_timeout);
-// }
+__weak
+int __real_sem_timedwait(sem_t * sem, const struct timespec *abs_timeout)
+{
+	return sem_timedwait(sem, abs_timeout);
+}
 
-// __weak
-// int __real_sem_getvalue(sem_t * sem, int *sval)
-// {
-// 	return sem_getvalue(sem, sval);
-// }
+__weak
+int __real_sem_getvalue(sem_t * sem, int *sval)
+{
+	return sem_getvalue(sem, sval);
+}
 
 // /* rtdm */
 // __weak
@@ -278,7 +284,7 @@
 // {
 // 	return recvmmsg(fd, msgvec, vlen, flags, timeout);
 // }
-
+// 
 // __weak
 // ssize_t __real_sendmsg(int fd, const struct msghdr * msg, int flags)
 // {
@@ -517,11 +523,11 @@
 // 	return gettimeofday(tv, tz);
 // }
 
-// __weak
-// int __real_clock_gettime(clockid_t clk_id, struct timespec *tp)
-// {
-// 	return clock_gettime(clk_id, tp);
-// }
+__weak
+int __real_clock_gettime(clockid_t clk_id, struct timespec *tp)
+{
+	return clock_gettime(clk_id, tp);
+}
 
 // __weak
 // int __real_clock_settime(clockid_t clk_id, const struct timespec *tp)
@@ -560,14 +566,14 @@
 // 	return kill(pid, sig);
 // }
 
-// __weak
-// unsigned int __real_sleep(unsigned int seconds)
-// {
-// 	return sleep(seconds);
-// }
+__weak
+unsigned int __real_sleep(unsigned int seconds)
+{
+	return sleep(seconds);
+}
 
-// __weak
-// int __real_usleep(useconds_t usec)
-// {
-// 	return usleep(usec);
-// }
+__weak
+int __real_usleep(useconds_t usec)
+{
+	return usleep(usec);
+}

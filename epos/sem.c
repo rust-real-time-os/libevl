@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <evl/sem.h>
 #include <epos/semaphore.h>
-#include "internal.h"
+#include "epos_internal.h"
 #include <errno.h>
 #include <semaphore.h>
 #include <stdlib.h>
@@ -9,17 +9,14 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 #define EVL_RANDOM_SEM_NAME_LEGNTH 15
 #define EVL_MAX_SEM_NAME_BUFFER 256
 
 static_assert(sizeof(sem_t) >= sizeof(struct evl_sem),
 	      "size of sem_t must greater than evl_sem");
-
-struct evl_sem *get_evl_sem(sem_t *std_sem)
-{
-	return (struct evl_sem *)std_sem;
-}
 
 EPOS_IMPL(int, sem_init, (sem_t * std_sem, int pshared, unsigned int value))
 {
@@ -41,7 +38,7 @@ EPOS_IMPL(int, sem_init, (sem_t * std_sem, int pshared, unsigned int value))
 EPOS_IMPL(int, sem_destroy, (sem_t * std_sem))
 {
 	struct evl_sem *sem = get_evl_sem(std_sem);
-    evl_close_sem(sem);
+    return evl_close_sem(sem);
 }
 
 EPOS_IMPL(int, sem_post, (sem_t * std_sem))
@@ -80,7 +77,7 @@ EPOS_IMPL(sem_t *, sem_open, (const char *name, int oflags, ...)){
 
 EPOS_IMPL(int, sem_close, (sem_t * std_sem)){
 	struct evl_sem *sem = get_evl_sem(std_sem);
-    evl_close_sem(sem);
+    return evl_close_sem(sem);
 }
 
 EPOS_IMPL(int, sem_unlink, (const char *name)){

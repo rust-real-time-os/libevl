@@ -4,7 +4,7 @@
 #include <epos/pthread.h>
 #include <epos/wrappers.h>
 #include <assert.h>
-#include "internal.h"
+#include "epos_internal.h"
 #include <pthread.h>
 
 static_assert(sizeof(pthread_mutex_t) >= sizeof(struct evl_mutex),

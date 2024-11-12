@@ -2,7 +2,7 @@
 #include <epos/pthread.h>
 #include <epos/wrappers.h>
 #include <assert.h>
-#include "internal.h"
+#include "epos_internal.h"
 #include <pthread.h>
 #include <errno.h>
 
@@ -10,11 +10,6 @@
 
 static_assert(sizeof(pthread_cond_t) >= sizeof(struct evl_event),
 	      "size of pthread_cond_t must greater than evl_event");
-
-struct evl_event *get_evl_cond(pthread_cond_t *std_cond)
-{
-	return (struct evl_event *)std_cond;
-}
 
 EPOS_IMPL(int, pthread_cond_init,
 	  (pthread_cond_t * std_cond, const pthread_condattr_t *attr))

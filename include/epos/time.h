@@ -24,7 +24,6 @@
 /* Re-read in case we came from selective __need* block. */
 #include_next <time.h>
 #include <epos/wrappers.h>
-#include "internal.h"
 
 #ifdef __cplusplus
 extern "C" {

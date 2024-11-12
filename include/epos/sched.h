@@ -16,46 +16,48 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #pragma GCC system_header
-#include_next <semaphore.h>
+#include_next <sched.h>
 
-#ifndef _EPOS_SEMAPHORE_H
-#define _EPOS_SEMAPHORE_H
+#ifndef _EPOS_SCHED_H
+#define _EPOS_SCHED_H
 
+#include <sys/types.h>
 #include <epos/wrappers.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-EPOS_DECL(int, sem_init(sem_t *sem,
-			  int pshared,
-			  unsigned int value));
+EPOS_DECL(int, sched_yield(void));
 
-EPOS_DECL(int, sem_destroy(sem_t *sem));
+EPOS_DECL(int, sched_get_priority_min(int policy));
 
-EPOS_DECL(int, sem_post(sem_t *sem));
+EPOS_DECL(int, sched_get_priority_max(int policy));
 
-EPOS_DECL(int, sem_wait(sem_t *sem));
+EPOS_DECL(int, sched_setscheduler(pid_t pid, int policy,
+				    const struct sched_param *param));
 
-EPOS_DECL(int, sem_timedwait(sem_t *sem,
-			       const struct timespec *abs_timeout));
+EPOS_DECL(int, sched_getscheduler(pid_t pid));
 
-EPOS_DECL(int, sem_trywait(sem_t *sem));
+// int sched_get_priority_min_ex(int policy);
 
-EPOS_DECL(int, sem_getvalue(sem_t *sem, int *value));
+// int sched_get_priority_max_ex(int policy);
 
-EPOS_DECL(sem_t *, sem_open(const char *name, int oflags, ...));
+// int sched_setscheduler_ex(pid_t pid, int policy,
+// 			  const struct sched_param_ex *param_ex);
 
-EPOS_DECL(int, sem_close(sem_t *sem));
+// int sched_getscheduler_ex(pid_t pid, int *policy_r,
+// 			  struct sched_param_ex *param_ex);
+ 
+// int sched_setconfig_np(int cpu, int policy,
+// 		       const union sched_config *config, size_t len);
 
-EPOS_DECL(int, sem_unlink(const char *name));
+// ssize_t sched_getconfig_np(int cpu, int policy,
+// 			   union sched_config *config, size_t *len_r);
 
-int sem_open_np(sem_t *sem,const char *name, int oflags, ...);
-
-int sem_broadcast_np(sem_t *sem);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* !_EPOS_SEMAPHORE_H */
+#endif /* !_EPOS_SCHED_H */

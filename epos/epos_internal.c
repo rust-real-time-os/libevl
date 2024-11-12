@@ -1,7 +1,7 @@
 #include <evl/thread.h>
 #include <evl/clock.h>
 #include <errno.h>
-#include "internal.h"
+#include "epos_internal.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,12 +112,20 @@ clockid_t get_evl_clock_id(clockid_t clock_id)
 	}
 }
 
-inline struct evl_mutex *get_evl_mutex(pthread_mutex_t *std_mutex)
+struct evl_mutex *get_evl_mutex(pthread_mutex_t *std_mutex)
 {
 	return (struct evl_mutex *)std_mutex;
 }
 
-inline struct evl_event *get_evl_cond(pthread_cond_t *std_cond)
+struct evl_event *get_evl_cond(pthread_cond_t *std_cond)
 {
 	return (struct evl_event *)std_cond;
+}
+
+int get_evl_thread_fd(pthread_t thread){
+	return thread <= INT_MAX ? (int) thread : (int) -EINVAL;
+}
+
+struct evl_sem *get_evl_sem(sem_t *std_sem){
+	return (struct evl_sem *)std_sem;
 }

@@ -4,6 +4,7 @@
 #include <evl/mutex.h>
 #include <evl/clock.h>
 #include <evl/thread.h>
+#include <limits.h>
 #include <semaphore.h>
 #include <epos/pthread.h>
 #include <epos/wrappers.h>
@@ -12,7 +13,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "internal.h"
+#include "epos_internal.h"
 
 struct pthread_iargs {
 	void *(*start)(void *);
@@ -80,12 +81,12 @@ EPOS_IMPL(int, pthread_create,
 		return ret;
 	}
 
-	clock_gettime(CLOCK_REALTIME, &timeout);
+	__STD(clock_gettime(CLOCK_REALTIME, &timeout));
 	timeout.tv_sec += 5;
 	timeout.tv_nsec = 0;
 
 	for (;;) {
-		sem_timedwait(&iargs.sync, &timeout);
+		__STD(sem_timedwait(&iargs.sync, &timeout));
 		if (ret && errno == EINTR)
 			continue;
 		if (ret == 0) {
@@ -106,7 +107,7 @@ EPOS_IMPL(int, pthread_create,
 	return ret;
 }
 
-EPOS_IMPL(int, pthread_join, (pthread_t ptid, void **retval))
+EPOS_IMPL(int, pthread_join, (pthread_t thread, void **retval))
 {
 	return 0;
 }
@@ -118,4 +119,75 @@ EPOS_IMPL(int, pthread_kill, (pthread_t ptid, int sig))
 EPOS_IMPL(int, pthread_yield, (void))
 {
 	return evl_yield();
+}
+
+EPOS_IMPL(int, pthread_setschedprio, (pthread_t thread, int prio))
+{
+	struct evl_sched_attrs attr;
+	int ret, efd;
+	ret = get_evl_thread_fd(thread);
+	if (ret < 0) {
+		return ret;
+	}
+	efd = ret;
+	ret = evl_get_schedattr(efd, &attr);
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	// TODO: we should check the range of prio
+	attr.sched_priority = prio;
+	ret = evl_set_schedattr(efd, &attr);
+	return ret;
+}
+
+EPOS_IMPL(int, pthread_setschedparam,
+	  (pthread_t thread, int policy, const struct sched_param *param))
+{
+	struct evl_sched_attrs attr;
+	int ret, efd;
+	ret = get_evl_thread_fd(thread);
+	if (ret < 0) {
+		return ret;
+	}
+	efd = ret;
+
+	ret = evl_get_schedattr(efd, &attr);
+	if (ret < 0) {
+		return ret;
+	}
+
+	attr.sched_policy = policy;
+
+	if (param) {
+		attr.sched_priority = param->sched_priority;
+	}
+
+	ret = evl_set_schedattr(efd, &attr);
+	return ret;
+}
+
+EPOS_IMPL(int, pthread_getschedparam,
+	  (pthread_t thread, int *policy, struct sched_param *param))
+{
+	struct evl_sched_attrs attr;
+	int ret, efd;
+	ret = get_evl_thread_fd(thread);
+	if (ret < 0) {
+		return ret;
+	}
+	efd = ret;
+
+	ret = evl_get_schedattr(efd, &attr);
+	if (ret < 0) {
+		return ret;
+	}
+	if (param) {
+		param->sched_priority = attr.sched_priority;
+	}
+	if (policy) {
+		*policy = attr.sched_policy;
+	}
+	return 0;
 }

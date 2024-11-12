@@ -39,6 +39,11 @@ define install_linking_command
 @echo '-I. -I$(DESTDIR)/include -fasynchronous-unwind-tables -Wl,-Wl,--wrap=main -L$(LIBEVL_RROS)/lib -lepos -levl -lpthread -lrt' > $(DESTDIR)/$(libdir)/$(DYNAMIC_LINKING_COMMAND)
 endef
 
+define alias_static_library
+ln -s $(DESTDIR)/lib/libepos-0.a $(DESTDIR)/lib/libepos.a
+ln -s $(DESTDIR)/lib/libevl-0.a $(DESTDIR)/lib/libevl.a
+endef
+
 install install_all: all
 	$(call inst-cmd,$(SOLIBNAME),$(INSTALL) -D $(O_DIR)/$(SOLIBNAME) -t $(DESTDIR)/$(libdir))
 	@$(LN_S) $(SOLIBNAME) $(DESTDIR)/$(libdir)/$(DTSONAME)
@@ -46,6 +51,8 @@ install install_all: all
 	$(call inst-cmd,$(ARLIBNAME),$(INSTALL) -D $(O_DIR)/$(ARLIBNAME) -t $(DESTDIR)/$(libdir))
 	$(call inst-cmd,$(WRAPPERSNAME),$(CP) $(WRAPPERSNAME) $(DESTDIR)/$(libdir)/$(WRAPPERSNAME))
 	$(call inst-cmd,$(COMPILE_AND_LINKING_COMMAND_FILE_SUFFIX),$(call install_linking_command))
+	$(call inst-cmd,"alias_static_library",$(call alias_static_library))
+
 
 clean clobber mrproper: output-Makefile
 	$(Q)$(RM) -f $(O_DIR)/git-stamp.h $(PIC_OBJFILES) $(OBJFILES) \
