@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <evl/sem.h>
 #include <epos/semaphore.h>
-#include "epos_internal.h"
+#include "internal.h"
 #include <errno.h>
 #include <semaphore.h>
 #include <stdlib.h>
@@ -22,17 +22,17 @@ EPOS_IMPL(int, sem_init, (sem_t * std_sem, int pshared, unsigned int value))
 {
 	char name_buf[EVL_RANDOM_SEM_NAME_LEGNTH + 1];
 	struct evl_sem *sem = get_evl_sem(std_sem);
-	int ret;
+	int err;
 	if (pshared == true) {
 		// try use `sem_open` instead.
 		return -EINVAL;
 	}
 
 	rand_str((char *)&name_buf, EVL_RANDOM_SEM_NAME_LEGNTH);
-	ret = evl_create_sem(sem, EVL_CLOCK_MONOTONIC, value, EVL_CLONE_PRIVATE,
+	err = evl_create_sem(sem, EVL_CLOCK_MONOTONIC, value, EVL_CLONE_PRIVATE,
 			     "%s-sem-%s", evl_program_basename, name_buf);
 
-	return ret;
+	return err;
 }
 
 EPOS_IMPL(int, sem_destroy, (sem_t * std_sem))
@@ -87,14 +87,14 @@ EPOS_IMPL(int, sem_unlink, (const char *name)){
 int sem_open_np(sem_t *std_sem,const char *name, int oflags, ...){
     char name_buf[EVL_MAX_SEM_NAME_BUFFER];
     struct evl_sem *sem;
-    int ret;
+    int err;
     if (name && name[0] == '/'){
         return -EINVAL;
     }
 
-    ret = snprintf(name_buf, EVL_MAX_SEM_NAME_BUFFER-1, "/dev/evl/sem/%s",name);
-    if (ret)
-        return ret;
+    err = snprintf(name_buf, EVL_MAX_SEM_NAME_BUFFER-1, "/dev/evl/sem/%s",name);
+    if (err)
+        return err;
 
    sem = get_evl_sem(std_sem);
     if (access(name_buf, F_OK)){

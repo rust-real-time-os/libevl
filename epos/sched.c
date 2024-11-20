@@ -1,4 +1,4 @@
-#include "epos_internal.h"
+#include "internal.h"
 #include <epos/sched.h>
 #include <evl/sched.h>
 

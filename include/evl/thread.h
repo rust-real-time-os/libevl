@@ -64,7 +64,7 @@ int evl_subscribe(int ofd,
 
 int evl_unsubscribe(int ofd);
 
-int evl_join(int efd);
+int evl_thread_join(int efd);
 
 #ifdef __cplusplus
 }

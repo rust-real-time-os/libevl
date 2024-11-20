@@ -2,7 +2,7 @@
 #include <evl/clock.h>
 #include <epos/time.h>
 #include <epos/unistd.h>
-#include "epos_internal.h"
+#include "internal.h"
 
 #define TIMESPEC_GREATER(t1, t2)                                               \
 	((t1.tv_sec > t2.tv_sec) ||                                            \

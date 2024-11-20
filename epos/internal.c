@@ -1,14 +1,16 @@
 #include <evl/thread.h>
 #include <evl/clock.h>
 #include <errno.h>
-#include "epos_internal.h"
+#include "internal.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-const char * evl_program_basename = NULL;
+const char *evl_program_basename = NULL;
 
-#define __esym_def(e)	[e] = #e
+int main_thread_efd = -1;
+
+#define __esym_def(e) [e] = #e
 
 static const char *__esym_map[] = {
 	[0] = "OK",
@@ -54,8 +56,7 @@ static const char *__esym_map[] = {
 	__esym_def(EPROTO),
 };
 
-#define __esym_max  (sizeof(__esym_map) / sizeof(__esym_map[0]))
-
+#define __esym_max (sizeof(__esym_map) / sizeof(__esym_map[0]))
 
 const char *symerror(int errnum)
 {
@@ -86,17 +87,18 @@ void rand_str(char *dest, size_t length)
 	*dest = '\0';
 }
 
-
-void evl_thread_harden(void){
-    if (evl_is_inband()){
-        evl_switch_oob();
-    }
+void evl_thread_harden(void)
+{
+	if (evl_is_inband()) {
+		evl_switch_oob();
+	}
 }
 
-void evl_thread_relax(void){
-    if(!evl_is_inband()){
-        evl_switch_inband();
-    }
+void evl_thread_relax(void)
+{
+	if (!evl_is_inband()) {
+		evl_switch_inband();
+	}
 }
 
 clockid_t get_evl_clock_id(clockid_t clock_id)
@@ -122,10 +124,29 @@ struct evl_event *get_evl_cond(pthread_cond_t *std_cond)
 	return (struct evl_event *)std_cond;
 }
 
-int get_evl_thread_fd(pthread_t thread){
-	return thread <= INT_MAX ? (int) thread : (int) -EINVAL;
+struct evl_sem *get_evl_sem(sem_t *std_sem)
+{
+	return (struct evl_sem *)std_sem;
 }
 
-struct evl_sem *get_evl_sem(sem_t *std_sem){
-	return (struct evl_sem *)std_sem;
+void set_current_thread_debug_mode(int efd)
+{
+	const int mask = T_WOSS;
+	int err;
+	err = evl_set_thread_mode(efd, mask,NULL);
+	if (err) {
+		printf("Fail to set thread mode,err=%d", err);
+	}
+}
+
+void get_current_state(int efd)
+{
+	struct evl_thread_state buf;
+	int err;
+	err = evl_get_state(efd, &buf);
+	if (err) {
+		printf("Failed to get state,err=%d", err);
+	}
+	printf("sched_policy=%d,sched_priority=%d,state=%d\n",
+	       buf.eattrs.sched_policy, buf.eattrs.sched_priority, buf.state);
 }

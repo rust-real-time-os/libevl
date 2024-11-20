@@ -1,10 +1,21 @@
 --wrap pthread_create
+--wrap pthread_attr_init
 --wrap pthread_join
---wrap pthread_kill
---wrap pthread_setname_np
 --wrap pthread_yield
 
---wrap pthread_attr_init
---wrap pthread_setschedparam
---wrap pthread_getschedparam
---wrap pthread_setschedprio
+--wrap pthread_mutex_init
+--wrap pthread_mutex_destroy
+--wrap pthread_mutex_lock
+--wrap pthread_mutex_unlock
+--wrap pthread_mutex_timedlock
+--wrap pthread_mutex_trylock
+
+--wrap nanosleep
+--wrap sleep
+--wrap clock_getres
+--wrap clock_gettime
+--wrap clock_settime
+--wrap clock_adjtime
+--wrap clock_nanosleep
+--wrap nanosleep
+--wrap time

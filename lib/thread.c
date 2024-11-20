@@ -274,10 +274,10 @@ int evl_unsubscribe(int efd)
 	return ret ? -errno : 0;
 }
 
-int evl_join(int efd)
+int evl_thread_join(int efd)
 {
 	if (evl_current == EVL_NO_HANDLE)
 		return -EPERM;
 
-	return oob_ioctl(efd, EVL_THRIOC_YIELD) ? -errno : 0;
+	return oob_ioctl(efd, EVL_THRIOC_JOIN) ? -errno : 0;
 }

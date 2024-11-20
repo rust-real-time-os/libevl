@@ -115,11 +115,11 @@ int __real_pthread_create(pthread_t *ptid_r,
 	return pthread_create(ptid_r, attr, start, arg);
 }
 
-__weak
-int __real_pthread_kill(pthread_t ptid, int sig)
-{
-	return pthread_kill(ptid, sig);
-}
+// __weak
+// int __real_pthread_kill(pthread_t ptid, int sig)
+// {
+// 	return pthread_kill(ptid, sig);
+// }
 
 __weak
 int __real_pthread_join(pthread_t ptid, void **retval)

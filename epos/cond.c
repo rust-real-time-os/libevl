@@ -2,7 +2,7 @@
 #include <epos/pthread.h>
 #include <epos/wrappers.h>
 #include <assert.h>
-#include "epos_internal.h"
+#include "internal.h"
 #include <pthread.h>
 #include <errno.h>
 
