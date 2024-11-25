@@ -131,7 +131,7 @@ struct evl_sem *get_evl_sem(sem_t *std_sem)
 
 void set_current_thread_debug_mode(int efd)
 {
-	const int mask = T_WOSS;
+	const int mask = T_WOSS | T_WOLI;
 	int err;
 	err = evl_set_thread_mode(efd, mask,NULL);
 	if (err) {
@@ -147,6 +147,7 @@ void get_current_state(int efd)
 	if (err) {
 		printf("Failed to get state,err=%d", err);
 	}
-	printf("sched_policy=%d,sched_priority=%d,state=%d\n",
+
+	printf("sched_policy=%d,sched_priority=%d,state=%x\n",
 	       buf.eattrs.sched_policy, buf.eattrs.sched_priority, buf.state);
 }

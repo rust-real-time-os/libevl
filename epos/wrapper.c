@@ -107,13 +107,13 @@ int __real_sched_getscheduler(pid_t pid)
 }
 
 /* pthread */
-__weak
-int __real_pthread_create(pthread_t *ptid_r,
-			  const pthread_attr_t * attr,
-			  void *(*start) (void *), void *arg)
-{
-	return pthread_create(ptid_r, attr, start, arg);
-}
+// __weak
+// int __real_pthread_create(pthread_t *ptid_r,
+// 			  const pthread_attr_t * attr,
+// 			  void *(*start) (void *), void *arg)
+// {
+// 	return pthread_create(ptid_r, attr, start, arg);
+// }
 
 // __weak
 // int __real_pthread_kill(pthread_t ptid, int sig)

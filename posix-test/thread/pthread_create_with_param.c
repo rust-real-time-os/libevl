@@ -10,8 +10,9 @@ static void *sub_thread(void *_)
     int ret,efd;
     efd = evl_get_self();
 	__Tcall_errno_assert(ret, evl_get_state(efd, &buf));
-    printf("sched_policy=%d,sched_priority=%d,state=%d\n",
-	       buf.eattrs.sched_policy, buf.eattrs.sched_priority, buf.state);
+    __Texpr_assert(buf.eattrs.sched_policy == 1);
+    __Texpr_assert(buf.eattrs.sched_priority== 2);
+
 	return NULL;
 }
 
@@ -19,7 +20,13 @@ int main()
 {
 	int ret;
 	pthread_t tid;
-	__Tcall_errno_assert(ret, pthread_create(&tid, NULL, sub_thread, NULL));
+    pthread_attr_t attr;
+    struct sched_param param;
+    param.sched_priority = 2;
+    pthread_attr_init(&attr);
+    pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
+    pthread_attr_setschedparam(&attr, &param);
+	__Tcall_errno_assert(ret, pthread_create(&tid, &attr, sub_thread, NULL));
 	printf("tid = %ld\n", tid);
 	__Tcall_errno_assert(ret, pthread_join(tid, NULL));
 }

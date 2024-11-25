@@ -31,7 +31,7 @@ int evl_new_timer(int clockfd)
 }
 
 int evl_set_timer(int efd,
-		struct itimerspec *value,
+		const struct itimerspec *value,
 		struct itimerspec *ovalue)
 {
 	struct __evl_itimerspec kits, koits;

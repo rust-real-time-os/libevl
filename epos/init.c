@@ -16,7 +16,6 @@ void set_program_name(const char *name);
 
 static void epos_init(const char *process_name)
 {
-	
 	struct evl_sched_attrs evl_sched_attr;
 	main_thread_efd = evl_attach_thread(EVL_CLONE_PUBLIC, process_name);
 
@@ -57,6 +56,5 @@ int epos_main(int argc, char *const argv[])
 	set_program_name(argv[0]);
 	epos_init(evl_program_basename);
 	get_current_state(main_thread_efd);
-	printf("aaaa\n");
 	return __real_main(argc, argv);
 }

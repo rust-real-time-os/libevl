@@ -70,7 +70,7 @@ EPOS_IMPL(int, sem_getvalue, (sem_t * std_sem, int *value)){
 }
 
 EPOS_IMPL(sem_t *, sem_open, (const char *name, int oflags, ...)){
-    // TODO: 使用malloc
+    // TODO: need to get a struct of sem. malloc?
     printf("Not support regular sem_open. Try sem_open_np instead!");
 	exit(1);
 }

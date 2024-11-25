@@ -18,7 +18,7 @@ extern "C" {
 int evl_new_timer(int clockfd);
 
 int evl_set_timer(int efd,
-		struct itimerspec *value,
+		const struct itimerspec *value,
 		struct itimerspec *ovalue);
 
 int evl_get_timer(int efd,
